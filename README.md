@@ -1,2 +1,3 @@
 # jobstamps
-Make-like caching of indepotent functions for python
+
+Make-like caching of idempotent functions for python
