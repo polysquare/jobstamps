@@ -26,5 +26,5 @@ deploy:
   password:
     secure: mQ+A+lFOmeJLFYXWKJ0bn8WK3PIsjPwmU2Kquip2946Y3VZ83FE2qymjX2PESplxozpl0eNvkw2+UuUb5dSolLk3ns77t4Oz1YzwFy57TJkabMzdqlpchaU+HpayO6RcxoG/bPXl4x6Gltpam9pAUGDt+UMhU9ZXIMr8oT0pjAeuazGzOORZsBCZTvwpz9EuYbTWEQ8g9/eNJv7P4cE3cZvNGjzd4SrOLY0xMXojCbbI708T2wHyNcm5tC4o3vs1vOlwVnTWzmheo71rYaRpWk6+h2ZGLfJRjFuiqTZv3o3+hQfDFxAvv/ULrhVZW0Sl9FM0wIUibesswqDIzEUfVdEQa1+IN97IKGw8i0ExAjqdC8MkPriIvuWMBXj7WGtdr8oDgC9lw/EnJ66wXwebbBHN9Jyzaf2ERaeptGmJxFm6/9u/uLpfZvB3DA70dK5JJCwnkrrFAXh7wtZO3lyYkR1DkeblW2b90tLBYRpBSKpZC1a9c7ZCpUe5FaUwJeMffKc5k3ErEgUN3SEcr3N+8B49xS5ut3bv6STnr/9Ng8nRBS+LGnS11VFsq2K55BpQm92AC0fbgQ9kM9Oe+S++4X+nM/i8+XOFqXs+MlmmcJzTBshFBuozgZBAWS5E7rv9gE4W4niHqYWztGHsqwAqIQBfJSgnIxmyBYPjIEVqztM=
   on:
-    tags: true
+    branch: master
     repo: polysquare/jobstamps
