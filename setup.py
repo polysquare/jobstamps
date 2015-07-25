@@ -37,7 +37,8 @@ setup(name="jobstamps",
                     "mock",
                     "setuptools-green>=0.0.11",
                     "six"],
-          "polysquarelint": ["polysquare-setuptools-lint"]
+          "polysquarelint": ["polysquare-setuptools-lint"],
+          "upload": ["setuptools-markdown"]
       },
       entry_points={
           "console_scripts": [
