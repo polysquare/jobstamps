@@ -1,0 +1,30 @@
+language: python
+sudo: false
+cache:
+  directories:
+  - container
+python:
+- '2.7'
+- '3.4'
+- pypy
+- pypy3
+install:
+- eval $(curl -LSs --retry 100 --connect-timeout 3 public-travis-scripts.polysquare.org/bootstrap.py
+  | python /dev/stdin -d container -s setup/python/setup.py -e bash -p /dev/stdout)
+script:
+- polysquare_run check/python/check.py
+before_cache:
+- polysquare_cleanup
+after_success:
+- polysquare_run coverage/python/coverage.py
+before_deploy:
+- polysquare_run deploy/python/deploy.py
+deploy:
+  provider: pypi
+  user:
+    secure: Cpr0FU4r/3GJMl8T1izwCloyxT4MkNgMsi8NOyRXzPq/TgtnIUidXdn4MinSDaMqtidwa6Q/MUQ1llYi8jZmRzE2f/2lY2e/3iEcnRy60ys63xvJi970B+MfLHvbLWwr8LhqQd/GazHHRw2noq4kdajmAE/mC0JZ5fT1WkoYeVP9MOlsq2uF21hVqP0JE6ICXDlkWsWalFLntgWbVidPQaxifkXOE6A+rcgBB+n3vcVYMO8oitsrRA+7jEqqwX0RB43/RIC/thXpzKmfnYjUIswYuxDW8p1WbDu5GTcI96OXC/ZthPCA3seWVY5kmT6uuDvyReyAAgdUGfW0uqyuZVprVHmvSXGnYvaB4Zgr6Vz0eY5/veMf226v/g76vu9O6pFFCzWnVF/j58zyvahnhzdmTXW9YjT724xc442P52Fi+Gem7cSK+xZKHm0LWRfBjTHTwS140jMmM0GYwjWY/PAOxpzMRrJS5+QNQV0NGjFpKPeZoogoEkhiVX4d+GxmpJI5Hq5gt/a/j1aIulRP5XkRMUMh5yNEuRhssU9bZnbvvDxqEr9B1wVtIUGbxtGJA/mSIrZtpQiTC8ja24GhAnP37jN8ZOi/gleDOeqAygphBjti4Ye9hoea1aG29/mALOsK+14YKu8javnAMUYKRkayykiDJeFfymOgnjizKyk=
+  password:
+    secure: mQ+A+lFOmeJLFYXWKJ0bn8WK3PIsjPwmU2Kquip2946Y3VZ83FE2qymjX2PESplxozpl0eNvkw2+UuUb5dSolLk3ns77t4Oz1YzwFy57TJkabMzdqlpchaU+HpayO6RcxoG/bPXl4x6Gltpam9pAUGDt+UMhU9ZXIMr8oT0pjAeuazGzOORZsBCZTvwpz9EuYbTWEQ8g9/eNJv7P4cE3cZvNGjzd4SrOLY0xMXojCbbI708T2wHyNcm5tC4o3vs1vOlwVnTWzmheo71rYaRpWk6+h2ZGLfJRjFuiqTZv3o3+hQfDFxAvv/ULrhVZW0Sl9FM0wIUibesswqDIzEUfVdEQa1+IN97IKGw8i0ExAjqdC8MkPriIvuWMBXj7WGtdr8oDgC9lw/EnJ66wXwebbBHN9Jyzaf2ERaeptGmJxFm6/9u/uLpfZvB3DA70dK5JJCwnkrrFAXh7wtZO3lyYkR1DkeblW2b90tLBYRpBSKpZC1a9c7ZCpUe5FaUwJeMffKc5k3ErEgUN3SEcr3N+8B49xS5ut3bv6STnr/9Ng8nRBS+LGnS11VFsq2K55BpQm92AC0fbgQ9kM9Oe+S++4X+nM/i8+XOFqXs+MlmmcJzTBshFBuozgZBAWS5E7rv9gE4W4niHqYWztGHsqwAqIQBfJSgnIxmyBYPjIEVqztM=
+  on:
+    tags: true
+    repo: polysquare/jobstamps
