@@ -8,7 +8,7 @@
 from setuptools import find_packages, setup
 
 setup(name="jobstamps",
-      version="0.0.4",
+      version="0.0.5",
       description="""Cache output of idempotent jobs.""",
       long_description_markdown_filename="README.md",
       author="Sam Spilsbury",
@@ -37,7 +37,8 @@ setup(name="jobstamps",
                     "mock",
                     "setuptools-green>=0.0.11",
                     "six"],
-          "polysquarelint": ["polysquare-setuptools-lint"]
+          "polysquarelint": ["polysquare-setuptools-lint"],
+          "upload": ["setuptools-markdown"]
       },
       entry_points={
           "console_scripts": [
