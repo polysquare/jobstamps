@@ -13,9 +13,9 @@ import json
 
 import os
 
-import tempfile
+import pickle
 
-from ast import literal_eval
+import tempfile
 
 
 def _safe_mkdir(directory):
@@ -27,27 +27,29 @@ def _safe_mkdir(directory):
             raise error
 
 
-def _stamp(stampfile, func, *args, **kwargs):
+def _stamp(stampfile, trigger, func, *args, **kwargs):
     """Store the repr() of the return value of func in stampfile."""
     if os.environ.get("JOBSTAMPS_DEBUG", None):
-        print("""JOBSTAMP: Dependency out of date, """  # pragma: no cover
-              """re-running {}""".format(func.__name__))
+        print("""JOBSTAMP: Dependency {0} out of date, """  # pragma: no cover
+              """re-running {1}""".format(trigger,
+                                          func.__name__))
     value = func(*args, **kwargs)
-    with open(stampfile, "w") as stamp:
+    with open(stampfile, "wb") as stamp:
         stamp.truncate()
-        stamp.write(repr(value))
+        pickle.dump(value, stamp)
 
     return value
 
 
-def _stamp_and_update_hook(method,
+def _stamp_and_update_hook(method,  # suppress(too-many-arguments)
                            dependencies,
                            stampfile,
+                           trigger,
                            func,
                            *args,
                            **kwargs):
     """Write stamp and call update_stampfile_hook on method."""
-    result = _stamp(stampfile, func, *args, **kwargs)
+    result = _stamp(stampfile, trigger, func, *args, **kwargs)
     method.update_stampfile_hook(dependencies)
     return result
 
@@ -164,6 +166,7 @@ def run(func, *args, **kwargs):
         return _stamp_and_update_hook(method,
                                       dependencies,
                                       stamp_file_name,
+                                      stamp_file_name,
                                       func,
                                       *args,
                                       **kwargs)
@@ -173,6 +176,7 @@ def run(func, *args, **kwargs):
             return _stamp_and_update_hook(method,
                                           dependencies,
                                           stamp_file_name,
+                                          expected_output_file,
                                           func,
                                           *args,
                                           **kwargs)
@@ -183,6 +187,7 @@ def run(func, *args, **kwargs):
             return _stamp_and_update_hook(method,
                                           dependencies,
                                           stamp_file_name,
+                                          dependency,
                                           func,
                                           *args,
                                           **kwargs)
@@ -194,5 +199,5 @@ def run(func, *args, **kwargs):
               """using cached value of {} from {}""".format(func.__name__,
                                                             stamp_file_name))
 
-    with open(stamp_file_name) as stamp:
-        return literal_eval(stamp.read())
+    with open(stamp_file_name, "rb") as stamp:
+        return pickle.load(stamp)
