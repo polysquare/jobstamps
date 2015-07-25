@@ -216,6 +216,34 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
 
     @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
     # suppress(no-self-use)
+    def test_job_runs_again_when_dependency_added(self, method):
+        """Job runs again when a new dependency is added."""
+        job = MockJob()
+        dependency = os.path.join(os.getcwd(), "dependency")
+        with open(dependency, "w") as dependency_file:
+            dependency_file.write("Contents")
+
+        jobstamp.run(job,
+                     1,
+                     jobstamps_dependencies=[dependency],
+                     jobstamps_cache_output_directory=os.getcwd(),
+                     jobstamps_method=method)
+
+        time.sleep(1)
+
+        dependency_new = os.path.join(os.getcwd(), "dependency_new")
+        with open(dependency_new, "w") as dependency_file:
+            dependency_file.write("Contents")
+
+        jobstamp.run(job,
+                     1,
+                     jobstamps_dependencies=[dependency, dependency_new],
+                     jobstamps_cache_output_directory=os.getcwd())
+
+        job.assert_has_calls([call(1), call(1)])
+
+    @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
+    # suppress(no-self-use)
     def test_job_runs_again_when_dependency_deleted(self, method):
         """Job runs again when dependency is later deleted."""
         job = MockJob()

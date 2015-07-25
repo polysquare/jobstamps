@@ -101,7 +101,11 @@ class HashMethod(object):
     def check_dependency(self, dependency_path):
         """Check if mtime of dependency_path is greater than stored mtime."""
         stored_hash = self._stamp_file_hashes.get(dependency_path)
-        assert stored_hash is not None
+
+        # This file was newly added, or we don't have a file
+        # with stored hashes yet. Assume out of date.
+        if not stored_hash:
+            return False
 
         return stored_hash == _sha1_for_file(dependency_path)
 
