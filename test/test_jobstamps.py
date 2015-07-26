@@ -49,6 +49,13 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
 
     _METHODS = (param(jobstamp.MTimeMethod), param(jobstamp.HashMethod))
 
+    def setUp(self):  # suppress(invalid-name)
+        """Clear the JOBSTAMPS_ALWAYS_USE_HASHES variable before each test."""
+        super(TestJobstamps, self).setUp()
+        always_use_hashes_var = "JOBSTAMPS_ALWAYS_USE_HASHES"
+        testutil.temporarily_clear_variable_on_testsuite(self,
+                                                         always_use_hashes_var)
+
     def test_raise_if_cachedir_exists_as_file(self):  # suppress(no-self-use)
         """Raise IOError if specified cache dir exists and is a file."""
         cache_entry = os.path.join(os.getcwd(), "cache")

@@ -73,12 +73,8 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
         # keep that variable during tests because it will the
         # mtime code paths to remain untested.
         always_use_hashes_var = "JOBSTAMPS_ALWAYS_USE_HASHES"
-        if os.environ.get(always_use_hashes_var, None):
-            original = {
-                always_use_hashes_var: os.environ[always_use_hashes_var]
-            }
-            del os.environ["JOBSTAMPS_ALWAYS_USE_HASHES"]
-            self.addCleanup(lambda: os.environ.update(original))
+        testutil.temporarily_clear_variable_on_testsuite(self,
+                                                         always_use_hashes_var)
 
     def test_require_double_dash(self):
         """Exit with error when -- is not present in command line."""
