@@ -1,4 +1,4 @@
-# Jobstamps #
+# Jobstamps
 
 Make-like caching of idempotent functions for python.
 
@@ -15,13 +15,13 @@ standard input, output and error of command line invocation and upon
 running that utility with the same arguments, the cached output
 is printed and return code returned.
 
-## Status ##
+## Status
 
-| Travis CI (Ubuntu) | AppVeyor (Windows) | Coverage | PyPI |
-|--------------------|--------------------|----------|------|
-|[![Travis](https://travis-ci.org/polysquare/jobstamps.svg?branch=master)](https://travis-ci.org/polysquare/jobstamps)|[[![AppVeyor](https://ci.appveyor.com/api/projects/status/t5sdh1v1iomfljbl/branch/master?svg=true)](https://ci.appveyor.com/project/smspillaz/jobstamps/branch/master)](https://ci.appveyor.com/project/smspillaz/jobstamps)|[![Coverage](https://coveralls.io/repos/polysquare/jobstamps/badge.png?branch=master)](https://coveralls.io/r/polysquare/jobstamps?branch=master)|[![PyPI](https://pypip.in/version/jobstamps/badge.svg)](https://pypi.python.org/pypi/jobstamps/)|
+| Travis CI (Ubuntu) | AppVeyor (Windows) | Coverage | PyPI | Licence |
+|--------------------|--------------------|----------|------|---------|
+|[![Travis](https://img.shields.io/travis/polysquare/jobstamps.svg)]()|[![AppVeyor](https://img.shields.io/appveyor/ci/polysquare/jobstamps.svg)]()|[![Coveralls](https://img.shields.io/coveralls/polysquare/jobstamps.svg)]()|[![PyPI](https://img.shields.io/pypi/v/jobstamps.svg)]()[![PyPI](https://img.shields.io/pypi/pyversions/jobstamps.svg)]()|[![License](https://img.shields.io/github/license/polysquare/jobstamps.svg)]()|
 
-## Usage ##
+## Usage
 
     usage: jobstamp [-h] [--dependencies [PATH [PATH ...]]]
                     [--output-files [PATH [PATH ...]]]
@@ -52,7 +52,7 @@ is printed and return code returned.
                             of the job. This method is slower, but can
                             withstand files being copied or moved.
 
-## API Usage ##
+## API Usage
 
 Python modules can integrate directly with the jobstamp API, which is
 exposed as so:
@@ -95,7 +95,7 @@ from the `kwargs` passed to the underlying function. Those are:
                       are copied or otherwise saved and restored between
                       invocations.
 
-## Influential environment variables ##
+## Influential environment variables
 
 Specify `JOBSTAMPS_DEBUG` to see when a job was re-run or a cached
 value was used.
