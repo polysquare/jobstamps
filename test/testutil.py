@@ -78,3 +78,13 @@ class InTemporaryDirectoryTestBase(testtools.TestCase):
         self.addCleanup(lambda: os.chdir(current_directory))
 
         super(InTemporaryDirectoryTestBase, self).setUp()
+
+
+def temporarily_clear_variable_on_testsuite(suite, variable):
+    """Temporarily clear environment variable on suite."""
+    if os.environ.get(variable, None):
+        original = {
+            variable: os.environ[variable]
+        }
+        del os.environ[variable]
+        suite.addCleanup(lambda: os.environ.update(original))
