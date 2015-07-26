@@ -147,7 +147,8 @@ def run(func, *args, **kwargs):
     storage_directory = os.path.join(tempfile.gettempdir(), "jobstamps")
     stamp_input = "".join([func.__name__] +
                           [repr(v) for v in args] +
-                          [repr(v) for v in kwargs.keys()]).encode("utf-8")
+                          [repr(kwargs[k])
+                           for k in sorted(kwargs.keys())]).encode("utf-8")
 
     dependencies = kwargs.pop("jobstamps_dependencies", None) or list()
     expected_output_files = (kwargs.pop("jobstamps_output_files", None) or
