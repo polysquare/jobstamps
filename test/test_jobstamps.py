@@ -89,6 +89,31 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
         self.assertThat(cache_directory, DirExists())
 
     @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
+    def test_stampfile_out_of_date_when_stampfile_doesnt_exist(self, method):
+        """Stamp file marked out of date when stamp file doesn't exist."""
+        cwd = os.getcwd()
+        ret = jobstamp.out_of_date(MockJob(),
+                                   1,
+                                   jobstamps_cache_output_directory=cwd,
+                                   jobstamps_method=method)
+        self.assertNotEqual(None, ret)
+
+    @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
+    def test_nothing_out_of_date_when_stampfile_does_exist(self, method):
+        """Nothing marked out of date when stamp file doesn't exist."""
+        job = MockJob()
+        cwd = os.getcwd()
+        jobstamp.run(job,
+                     1,
+                     jobstamps_cache_output_directory=cwd,
+                     jobstamps_method=method)
+        ret = jobstamp.out_of_date(job,
+                                   1,
+                                   jobstamps_cache_output_directory=cwd,
+                                   jobstamps_method=method)
+        self.assertEqual(None, ret)
+
+    @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
     def test_running_job_returns_expected_value(self, method):
         """Job is run initially when there is no stamp."""
         job = MockJob()
@@ -173,6 +198,25 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
         job.assert_has_calls([call(1), call(1)])
 
     @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
+    def test_dependency_out_of_date_when_dependency_doesnt_exist(self, method):
+        """Dependency is marked out of date when it does not exist."""
+        job = MockJob()
+        dependency = os.path.join(os.getcwd(), "dependency")
+        cwd = os.getcwd()
+
+        jobstamp.run(job,
+                     1,
+                     jobstamps_dependencies=[dependency],
+                     jobstamps_cache_output_directory=cwd,
+                     jobstamps_method=method)
+        ret = jobstamp.out_of_date(job,
+                                   1,
+                                   jobstamps_dependencies=[dependency],
+                                   jobstamps_cache_output_directory=cwd,
+                                   jobstamps_method=method)
+        self.assertEqual(dependency, ret)
+
+    @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
     # suppress(no-self-use)
     def test_job_runs_once_only_once_when_dependency_up_to_date(self, method):
         """Job runs only once when stamp is more recent than dependency."""
@@ -220,6 +264,33 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
                      jobstamps_cache_output_directory=os.getcwd())
 
         job.assert_has_calls([call(1), call(1)])
+
+    @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
+    def test_dependency_out_of_date_when_dependency_updated(self, method):
+        """Dependency is marked out of date when it is updated."""
+        job = MockJob()
+        dependency = os.path.join(os.getcwd(), "dependency")
+        cwd = os.getcwd()
+        with open(dependency, "w") as dependency_file:
+            dependency_file.write("Contents")
+
+        jobstamp.run(job,
+                     1,
+                     jobstamps_dependencies=[dependency],
+                     jobstamps_cache_output_directory=cwd,
+                     jobstamps_method=method)
+
+        time.sleep(1)
+
+        with open(dependency, "w") as dependency_file:
+            dependency_file.write("Updated")
+
+        ret = jobstamp.out_of_date(MockJob(),
+                                   1,
+                                   jobstamps_dependencies=[dependency],
+                                   jobstamps_cache_output_directory=cwd,
+                                   jobstamps_method=method)
+        self.assertEqual(dependency, ret)
 
     @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
     # suppress(no-self-use)
@@ -273,6 +344,31 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
 
         job.assert_has_calls([call(1), call(1)])
 
+    @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
+    def test_dependency_out_of_date_when_dependency_deleted(self, method):
+        """Dependency is marked out of date when it is deleted."""
+        job = MockJob()
+        cwd = os.getcwd()
+        dependency = os.path.join(os.getcwd(), "dependency")
+        with open(dependency, "w") as dependency_file:
+            dependency_file.write("Contents")
+
+        jobstamp.run(job,
+                     1,
+                     jobstamps_dependencies=[dependency],
+                     jobstamps_cache_output_directory=cwd,
+                     jobstamps_method=method)
+
+        os.remove(dependency)
+
+        cwd = os.getcwd()
+        ret = jobstamp.out_of_date(job,
+                                   1,
+                                   jobstamps_dependencies=[dependency],
+                                   jobstamps_cache_output_directory=cwd,
+                                   jobstamps_method=method)
+        self.assertEqual(dependency, ret)
+
     # suppress(no-self-use)
     def test_job_runs_again_when_output_file_doesnt_exist(self):
         """Job can be run twice when output file doesn't exist."""
@@ -289,6 +385,22 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
                      jobstamps_cache_output_directory=os.getcwd())
 
         job.assert_has_calls([call(1), call(1)])
+
+    def test_output_file_out_of_date_when_output_file_doesnt_exist(self):
+        """Output file is out of date when output file doesn't exist."""
+        expected_outputs = os.path.join(os.getcwd(), "expected_output")
+        cwd = os.getcwd()
+        job = MockJob()
+
+        jobstamp.run(job,
+                     1,
+                     jobstamps_output_files=[expected_outputs],
+                     jobstamps_cache_output_directory=cwd)
+        ret = jobstamp.out_of_date(job,
+                                   1,
+                                   jobstamps_output_files=[expected_outputs],
+                                   jobstamps_cache_output_directory=cwd)
+        self.assertEqual(expected_outputs, ret)
 
     # suppress(no-self-use)
     def test_job_runs_once_when_output_file_exists(self):

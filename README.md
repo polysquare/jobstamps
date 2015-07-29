@@ -66,6 +66,13 @@ __repr__) in a stamp file in the temporary files directory. The next time
 the function is invoked through the `jobstamp` wrapper with the same arguments,
 the result from the stampfile will be loaded and returned directly.
 
+If you want to check if a function will be run again without actually running
+it, then, you can use the `out_of_date` function. That function returns
+either `None` or any file which would, by virtue of being out of date,
+cause the job to be re-run.
+
+    out_of_date(func, *args, **kwargs)
+
 Certain `kwargs` have special meanings and will be parsed and removed
 from the `kwargs` passed to the underlying function. Those are:
 
