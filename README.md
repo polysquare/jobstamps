@@ -19,7 +19,7 @@ is printed and return code returned.
 
 | Travis CI (Ubuntu) | AppVeyor (Windows) | Coverage | PyPI | Licence |
 |--------------------|--------------------|----------|------|---------|
-|[![Travis](https://img.shields.io/travis/polysquare/jobstamps.svg)]()|[![AppVeyor](https://img.shields.io/appveyor/ci/polysquare/jobstamps.svg)]()|[![Coveralls](https://img.shields.io/coveralls/polysquare/jobstamps.svg)]()|[![PyPI](https://img.shields.io/pypi/v/jobstamps.svg)]()[![PyPI](https://img.shields.io/pypi/pyversions/jobstamps.svg)]()|[![License](https://img.shields.io/github/license/polysquare/jobstamps.svg)]()|
+|[![Travis](https://img.shields.io/travis/polysquare/jobstamps.svg)](http://travis-ci.org/polysquare/jobstamps)|[![AppVeyor](https://img.shields.io/appveyor/ci/smspillaz/jobstamps.svg)](https://ci.appveyor.com/project/smspillaz/jobstamps)|[![Coveralls](https://img.shields.io/coveralls/polysquare/jobstamps.svg)](http://coveralls.io/polysquare/jobstamps)|[![PyPIVersion](https://img.shields.io/pypi/v/jobstamps.svg)](https://pypi.python.org/pypi/jobstamps)[![PyPIPythons](https://img.shields.io/pypi/pyversions/jobstamps.svg)](https://pypi.python.org/pypi/jobstamps)|[![License](https://img.shields.io/github/license/polysquare/jobstamps.svg)](http://github.com/polysquare/jobstamps)|
 
 ## Usage
 
