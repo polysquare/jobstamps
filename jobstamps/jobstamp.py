@@ -17,6 +17,8 @@ import pickle
 
 import tempfile
 
+from collections import namedtuple
+
 
 def _safe_mkdir(directory):
     """Create a directory, ignoring errors if it already exists."""
@@ -27,12 +29,8 @@ def _safe_mkdir(directory):
             raise error
 
 
-def _stamp(stampfile, trigger, func, *args, **kwargs):
+def _stamp(stampfile, func, *args, **kwargs):
     """Store the repr() of the return value of func in stampfile."""
-    if os.environ.get("JOBSTAMPS_DEBUG", None):
-        print("""JOBSTAMP: Dependency {0} out of date, """  # pragma: no cover
-              """re-running {1}""".format(trigger,
-                                          func.__name__))
     value = func(*args, **kwargs)
     with open(stampfile, "wb") as stamp:
         stamp.truncate()
@@ -44,12 +42,11 @@ def _stamp(stampfile, trigger, func, *args, **kwargs):
 def _stamp_and_update_hook(method,  # suppress(too-many-arguments)
                            dependencies,
                            stampfile,
-                           trigger,
                            func,
                            *args,
                            **kwargs):
     """Write stamp and call update_stampfile_hook on method."""
-    result = _stamp(stampfile, trigger, func, *args, **kwargs)
+    result = _stamp(stampfile, func, *args, **kwargs)
     method.update_stampfile_hook(dependencies)
     return result
 
@@ -129,10 +126,7 @@ def _determine_method(user_method):
     else:
         return user_method or MTimeMethod
 
-
-def run(func, *args, **kwargs):
-    """Run a job, re-using the cached result if not out of date.
-
+_JOBSTAMPS_KWARGS_DESCRIPTIONS = """
     :jobstamps_dependencies: If the stamp file is newer than any file in this
                              list, re-run the job.
     :jobstamps_output_files: If any of the files in this list do not
@@ -143,7 +137,15 @@ def run(func, *args, **kwargs):
                        date. By default, MTimeMethod is used, but HashMethod
                        should be used if files are being copied around
                        without being changed substantively.
-    """
+"""
+
+
+_OutOfDateActionDetail = namedtuple("_OutOfDateActionDetail",
+                                    "stamp dependencies method kwargs")
+
+
+def _out_of_date(func, *args, **kwargs):
+    """Internal function returning out of date file and detail to run job."""
     storage_directory = os.path.join(tempfile.gettempdir(), "jobstamps")
     stamp_input = "".join([func.__name__] +
                           [repr(v) for v in args] +
@@ -165,44 +167,66 @@ def run(func, *args, **kwargs):
         raise IOError("""{} exists and is """
                       """not a directory.""".format(cache_output_directory))
 
-    method = method_class(stamp_file_name)
+    detail = _OutOfDateActionDetail(stamp=stamp_file_name,
+                                    dependencies=dependencies,
+                                    method=method_class(stamp_file_name),
+                                    kwargs=kwargs)
 
     if not os.path.exists(stamp_file_name):
-        return _stamp_and_update_hook(method,
-                                      dependencies,
-                                      stamp_file_name,
-                                      stamp_file_name,
-                                      func,
-                                      *args,
-                                      **kwargs)
+        return stamp_file_name, detail
 
     for expected_output_file in expected_output_files:
         if not os.path.exists(expected_output_file):
-            return _stamp_and_update_hook(method,
-                                          dependencies,
-                                          stamp_file_name,
-                                          expected_output_file,
-                                          func,
-                                          *args,
-                                          **kwargs)
+            return expected_output_file, detail
 
     for dependency in dependencies:
         if (not os.path.exists(dependency) or
-                not method.check_dependency(dependency)):
-            return _stamp_and_update_hook(method,
-                                          dependencies,
-                                          stamp_file_name,
-                                          dependency,
-                                          func,
-                                          *args,
-                                          **kwargs)
+                not detail.method.check_dependency(dependency)):
+            return dependency, detail
+
+    return None, detail
+
+
+def out_of_date(func, *args, **kwargs):  # suppress(unused-function)
+    """Return relevant file in the job's proposed call that is out of date.
+
+    If nothing is out of date, return None.
+
+    This method can be used to check if func will run, without actually
+    running it.
+
+    {kwargs_description}
+    """.format(kwargs_description=_JOBSTAMPS_KWARGS_DESCRIPTIONS)
+    return _out_of_date(func, *args, **kwargs)[0]
+
+
+def run(func, *args, **kwargs):
+    """Run a job, re-using the cached result if not out of date.
+
+    {kwargs_description}
+    """.format(kwargs_description=_JOBSTAMPS_KWARGS_DESCRIPTIONS)
+    trigger, detail = _out_of_date(func, *args, **kwargs)
+    jobstamps_debug = os.environ.get("JOBSTAMPS_DEBUG", None)
+
+    if trigger:
+        if jobstamps_debug:
+            print("""JOBSTAMP: Dependency {0} out of """  # pragma: no cover
+                  """date, re-running {1}""".format(trigger,
+                                                    func.__name__))
+
+        return _stamp_and_update_hook(detail.method,
+                                      detail.dependencies,
+                                      detail.stamp,
+                                      func,
+                                      *args,
+                                      **detail.kwargs)
 
     # It is safe to re-use the cached value, open the stampfile
     # and return its contents
-    if os.environ.get("JOBSTAMPS_DEBUG", None):
+    if jobstamps_debug:
         print("""JOBSTAMP: Dependencies up to date, """  # pragma: no cover
               """using cached value of {} from {}""".format(func.__name__,
-                                                            stamp_file_name))
+                                                            detail.stamp))
 
-    with open(stamp_file_name, "rb") as stamp:
+    with open(detail.stamp, "rb") as stamp:
         return pickle.load(stamp)
