@@ -20,36 +20,26 @@ import argparse
 
 import os
 
+import shutil  # suppress(unused-import)
+
 import subprocess
 
 import sys
 
 from jobstamps import jobstamp
 
-from shutilwhich import which  # suppress(import-error)
+import parseshebang
 
-
-def _shebang_parts(executable):
-    """Return any shebang from executable to be prepended to invocation."""
-    with open(executable, "r") as fileobj:
-        try:
-            part = fileobj.read(2)
-        except UnicodeDecodeError:
-            part = ""
-
-        if part == "#!":
-            return fileobj.readline().strip().split(" ")
-
-    return []
+import shutilwhich  # suppress(F401,unused-import)
 
 
 def _run_cmd(cmd):
     """Run command specified by :cmd: and return stdout, stderr and code."""
     if not os.path.exists(cmd[0]):
-        cmd[0] = which(cmd[0])
+        cmd[0] = shutil.which(cmd[0])
         assert cmd[0] is not None
 
-    shebang_parts = _shebang_parts(cmd[0])
+    shebang_parts = parseshebang.parse(cmd[0])
 
     proc = subprocess.Popen(shebang_parts + cmd,
                             stdout=subprocess.PIPE,
