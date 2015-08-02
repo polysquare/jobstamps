@@ -37,7 +37,7 @@ setup(name="jobstamps",
                     "nose",
                     "nose-parameterized>=0.5.0",
                     "mock",
-                    "setuptools-green>=0.0.14",
+                    "setuptools-green>=0.0.13",
                     "six"],
           "polysquarelint": ["polysquare-setuptools-lint>=0.0.19"],
           "upload": ["setuptools-markdown"]
