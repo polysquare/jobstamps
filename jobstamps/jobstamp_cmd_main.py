@@ -20,6 +20,8 @@ import argparse
 
 import os
 
+import shutil  # suppress(unused-import)
+
 import subprocess
 
 import sys
@@ -28,13 +30,13 @@ from jobstamps import jobstamp
 
 import parseshebang
 
-from shutilwhich import which  # suppress(import-error)
+import shutilwhich  # suppress(F401,unused-import)
 
 
 def _run_cmd(cmd):
     """Run command specified by :cmd: and return stdout, stderr and code."""
     if not os.path.exists(cmd[0]):
-        cmd[0] = which(cmd[0])
+        cmd[0] = shutil.which(cmd[0])
         assert cmd[0] is not None
 
     shebang_parts = parseshebang.parse(cmd[0])

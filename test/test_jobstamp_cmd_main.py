@@ -7,6 +7,8 @@
 
 import os
 
+import shutil
+
 import stat
 
 from test import testutil
@@ -15,7 +17,7 @@ from jobstamps import jobstamp_cmd_main
 
 from nose_parameterized import param, parameterized
 
-from shutilwhich import which  # suppress(import-error)
+import shutilwhich  # suppress(F401,unused-import)
 
 
 def run_executable(*args):
@@ -38,7 +40,7 @@ def _flag_doc(func, num, params):
     return func.__doc__
 
 
-_PYTHON_SHEBANG = "#!{}\n".format(which("python"))
+_PYTHON_SHEBANG = "#!{}\n".format(shutil.which("python"))
 
 
 class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
