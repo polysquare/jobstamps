@@ -115,7 +115,7 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
 
     @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
     def test_running_job_returns_expected_value(self, method):
-        """Job is run initially when there is no stamp."""
+        """Job is run initially when there is no stamp and returns value."""
         job = MockJob()
         job.return_value = "expected"
         value = jobstamp.run(job,
