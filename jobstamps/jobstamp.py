@@ -161,16 +161,20 @@ def _out_of_date(func, *args, **kwargs):
 
     stamp_file_name = os.path.join(cache_output_directory,
                                    hashlib.md5(stamp_input).hexdigest())
-    _safe_mkdir(cache_output_directory)
-
-    if not os.path.isdir(cache_output_directory):
-        raise IOError("""{} exists and is """
-                      """not a directory.""".format(cache_output_directory))
 
     detail = _OutOfDateActionDetail(stamp=stamp_file_name,
                                     dependencies=dependencies,
                                     method=method_class(stamp_file_name),
                                     kwargs=kwargs)
+
+    if os.environ.get("JOBSTAMPS_DISABLED", None):
+        return "JOBSTAMPS_DISABLED", detail
+
+    _safe_mkdir(cache_output_directory)
+
+    if not os.path.isdir(cache_output_directory):
+        raise IOError("""{} exists and is """
+                      """not a directory.""".format(cache_output_directory))
 
     if not os.path.exists(stamp_file_name):
         return stamp_file_name, detail

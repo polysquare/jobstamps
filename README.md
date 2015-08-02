@@ -104,6 +104,10 @@ from the `kwargs` passed to the underlying function. Those are:
 
 ## Influential environment variables
 
+Specify `JOBSTAMPS_DISABLED` to always disable caching of jobs on all
+invocations. Jobs will always be re-run, but existing stamp files
+won't be removed.
+
 Specify `JOBSTAMPS_DEBUG` to see when a job was re-run or a cached
 value was used.
 
