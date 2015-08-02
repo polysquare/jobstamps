@@ -13,6 +13,8 @@ import stat
 
 from test import testutil
 
+from iocapture import capture
+
 from jobstamps import jobstamp_cmd_main
 
 from nose_parameterized import param, parameterized
@@ -80,7 +82,7 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
 
     def test_require_double_dash(self):
         """Exit with error when -- is not present in command line."""
-        with testutil.CapturedOutput():
+        with capture():
             self.assertEqual(jobstamp_cmd_main.main(["cmd"]), 1)
 
     def test_run_binary_executable(self):
@@ -102,10 +104,9 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
                                   "import sys\n"
                                   "sys.stdout.write(\"stdout\\n\")\n")
 
-        with testutil.CapturedOutput() as captured:
+        with capture() as captured:
             run_executable(*flags)
-
-        self.assertEqual(captured.stdout.replace("\r\n", "\n"), "stdout\n")
+            self.assertEqual(captured.stdout.replace("\r\n", "\n"), "stdout\n")
 
     @parameterized.expand(_FLAGS, testcase_func_doc=_flag_doc)
     def test_writes_stderr(self, flags):
@@ -115,10 +116,9 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
                                   "import sys\n"
                                   "sys.stderr.write(\"stderr\\n\")\n")
 
-        with testutil.CapturedOutput() as captured:
+        with capture() as captured:
             run_executable(*flags)
-
-        self.assertEqual(captured.stderr.replace("\r\n", "\n"), "stderr\n")
+            self.assertEqual(captured.stderr.replace("\r\n", "\n"), "stderr\n")
 
     @parameterized.expand(_FLAGS, testcase_func_doc=_flag_doc)
     def test_returncode(self, flags):
@@ -128,7 +128,7 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
                                   "import sys\n"
                                   "sys.exit(2)\n")
 
-        with testutil.CapturedOutput():
+        with capture():
             self.assertEqual(run_executable(*flags), 2)
 
     @parameterized.expand(_FLAGS, testcase_func_doc=_flag_doc)
@@ -139,7 +139,7 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
                                   "import sys\n"
                                   "sys.exit(2)\n")
 
-        with testutil.CapturedOutput():
+        with capture():
             run_executable(*flags)
             self.assertEqual(run_executable(*flags), 2)
 
@@ -151,13 +151,12 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
                                   "import sys\n"
                                   "sys.stdout.write(\"stdout\\n\")\n")
 
-        with testutil.CapturedOutput():
+        with capture():
             run_executable(*flags)
 
-        with testutil.CapturedOutput() as captured:
+        with capture() as captured:
             run_executable(*flags)
-
-        self.assertEqual(captured.stdout.replace("\r\n", "\n"), "stdout\n")
+            self.assertEqual(captured.stdout.replace("\r\n", "\n"), "stdout\n")
 
     @parameterized.expand(_FLAGS, testcase_func_doc=_flag_doc)
     def test_writes_stderr_from_cache(self, flags):
@@ -167,10 +166,9 @@ class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
                                   "import sys\n"
                                   "sys.stderr.write(\"stderr\\n\")\n")
 
-        with testutil.CapturedOutput():
+        with capture():
             run_executable(*flags)
 
-        with testutil.CapturedOutput() as captured:
+        with capture() as captured:
             run_executable(*flags)
-
-        self.assertEqual(captured.stderr.replace("\r\n", "\n"), "stderr\n")
+            self.assertEqual(captured.stderr.replace("\r\n", "\n"), "stderr\n")

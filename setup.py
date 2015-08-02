@@ -33,6 +33,7 @@ setup(name="jobstamps",
                         "setuptools"],
       extras_require={
           "green": ["testtools",
+                    "iocapture",
                     "nose",
                     "nose-parameterized>=0.5.0",
                     "mock",
