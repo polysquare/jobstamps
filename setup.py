@@ -8,7 +8,7 @@
 from setuptools import find_packages, setup
 
 setup(name="jobstamps",
-      version="0.0.14",
+      version="0.0.15",
       description="""Cache output of idempotent jobs.""",
       long_description_markdown_filename="README.md",
       author="Sam Spilsbury",
