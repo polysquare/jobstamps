@@ -26,21 +26,9 @@ import sys
 
 from jobstamps import jobstamp
 
+import parseshebang
+
 from shutilwhich import which  # suppress(import-error)
-
-
-def _shebang_parts(executable):
-    """Return any shebang from executable to be prepended to invocation."""
-    with open(executable, "r") as fileobj:
-        try:
-            part = fileobj.read(2)
-        except UnicodeDecodeError:
-            part = ""
-
-        if part == "#!":
-            return fileobj.readline().strip().split(" ")
-
-    return []
 
 
 def _run_cmd(cmd):
@@ -49,7 +37,7 @@ def _run_cmd(cmd):
         cmd[0] = which(cmd[0])
         assert cmd[0] is not None
 
-    shebang_parts = _shebang_parts(cmd[0])
+    shebang_parts = parseshebang.parse(cmd[0])
 
     proc = subprocess.Popen(shebang_parts + cmd,
                             stdout=subprocess.PIPE,
