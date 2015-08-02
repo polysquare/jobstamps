@@ -55,6 +55,8 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
         always_use_hashes_var = "JOBSTAMPS_ALWAYS_USE_HASHES"
         testutil.temporarily_clear_variable_on_testsuite(self,
                                                          always_use_hashes_var)
+        testutil.temporarily_clear_variable_on_testsuite(self,
+                                                         "JOBSTAMPS_DISABLED")
 
     def test_raise_if_cachedir_exists_as_file(self):  # suppress(no-self-use)
         """Raise IOError if specified cache dir exists and is a file."""
@@ -160,6 +162,24 @@ class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
                      jobstamps_method=method)
 
         job.assert_called_once_with(1)
+
+    @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
+    # suppress(no-self-use)
+    def test_running_twice_with_jobstamps_disabled_runs_twice(self, method):
+        """Job is run twice when JOBSTAMPS_DISABLED is set."""
+        os.environ["JOBSTAMPS_DISABLED"] = "1"
+        self.addCleanup(lambda: os.environ.pop("JOBSTAMPS_DISABLED", None))
+        job = MockJob()
+        jobstamp.run(job,
+                     1,
+                     jobstamps_cache_output_directory=os.getcwd(),
+                     jobstamps_method=method)
+        jobstamp.run(job,
+                     1,
+                     jobstamps_cache_output_directory=os.getcwd(),
+                     jobstamps_method=method)
+
+        job.assert_has_calls([call(1), call(1)])
 
     @parameterized.expand(_METHODS, testcase_func_doc=_update_method_doc)
     # suppress(no-self-use)
