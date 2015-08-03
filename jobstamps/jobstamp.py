@@ -218,12 +218,15 @@ def run(func, *args, **kwargs):
                   """date, re-running {1}""".format(trigger,
                                                     func.__name__))
 
-        return _stamp_and_update_hook(detail.method,
-                                      detail.dependencies,
-                                      detail.stamp,
-                                      func,
-                                      *args,
-                                      **detail.kwargs)
+        if os.environ.get("JOBSTAMPS_DISABLED", None):
+            return func(*args, **detail.kwargs)
+        else:
+            return _stamp_and_update_hook(detail.method,
+                                          detail.dependencies,
+                                          detail.stamp,
+                                          func,
+                                          *args,
+                                          **detail.kwargs)
 
     # It is safe to re-use the cached value, open the stampfile
     # and return its contents
