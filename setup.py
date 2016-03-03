@@ -32,14 +32,6 @@ setup(name="jobstamps",
                         "shutilwhich",
                         "setuptools"],
       extras_require={
-          "green": ["testtools",
-                    "iocapture",
-                    "nose",
-                    "nose-parameterized>=0.5.0",
-                    "mock",
-                    "setuptools-green>=0.0.13",
-                    "six"],
-          "polysquarelint": ["polysquare-setuptools-lint>=0.0.19"],
           "upload": ["setuptools-markdown"]
       },
       entry_points={

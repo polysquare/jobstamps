@@ -15,7 +15,6 @@ import testtools
 
 
 class InTemporaryDirectoryTestBase(testtools.TestCase):
-
     """A TestCase which happens inside a temporary directory."""
 
     def __init__(self, *args, **kwargs):
