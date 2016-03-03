@@ -24,7 +24,6 @@ from testtools.matchers import DirExists
 
 
 class MockJob(Mock):
-
     """Wraps Mock to provide __name__ attribute."""
 
     def __init__(self, *args, **kwargs):
@@ -44,7 +43,6 @@ def _update_method_doc(func, num, params):
 
 
 class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
-
     """TestCase for jobstamps module."""
 
     _METHODS = (param(jobstamp.MTimeMethod), param(jobstamp.HashMethod))

@@ -46,7 +46,6 @@ _PYTHON_SHEBANG = "#!{}\n".format(shutil.which("python"))
 
 
 class TestJobstampMain(testutil.InTemporaryDirectoryTestBase):
-
     """TestCase for jobstamps module."""
 
     def __init__(self, *args, **kwargs):

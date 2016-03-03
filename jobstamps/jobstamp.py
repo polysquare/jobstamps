@@ -59,7 +59,6 @@ def _sha1_for_file(filename):
 
 
 class MTimeMethod(object):
-
     """Method to verify if dependencies are up to date using timestamps."""
 
     def __init__(self, stamp_file_path):
@@ -80,7 +79,6 @@ class MTimeMethod(object):
 
 
 class HashMethod(object):
-
     """Method to verify if dependencies are up to date using a hash."""
 
     def __init__(self, stamp_file_path):
