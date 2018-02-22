@@ -121,8 +121,8 @@ def _determine_method(user_method):
     """
     if os.environ.get("JOBSTAMPS_ALWAYS_USE_HASHES", None):
         return HashMethod  # pragma: no cover
-    else:
-        return user_method or MTimeMethod
+
+    return user_method or MTimeMethod
 
 _JOBSTAMPS_KWARGS_DESCRIPTIONS = """
     :jobstamps_dependencies: If the stamp file is newer than any file in this
@@ -218,13 +218,13 @@ def run(func, *args, **kwargs):
 
         if os.environ.get("JOBSTAMPS_DISABLED", None):
             return func(*args, **detail.kwargs)
-        else:
-            return _stamp_and_update_hook(detail.method,
-                                          detail.dependencies,
-                                          detail.stamp,
-                                          func,
-                                          *args,
-                                          **detail.kwargs)
+
+        return _stamp_and_update_hook(detail.method,
+                                      detail.dependencies,
+                                      detail.stamp,
+                                      func,
+                                      *args,
+                                      **detail.kwargs)
 
     # It is safe to re-use the cached value, open the stampfile
     # and return its contents
