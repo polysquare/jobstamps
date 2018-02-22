@@ -36,7 +36,7 @@ def _flag_doc(func, num, params):
     del num
 
     flags = params[0][0]
-    if len(flags):
+    if flags:
         return func.__doc__[:-1] + """ with flags {}""".format(" ".join(flags))
 
     return func.__doc__
