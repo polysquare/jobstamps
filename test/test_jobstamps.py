@@ -41,6 +41,8 @@ def _update_method_doc(func, num, params):
     elif params[0][0] is jobstamp.HashMethod:
         return func.__doc__[:-1] + """ using Hash Method."""
 
+    raise RuntimeError("""Unknown method {}""".format(params[0][0]))
+
 
 class TestJobstamps(testutil.InTemporaryDirectoryTestBase):
     """TestCase for jobstamps module."""
