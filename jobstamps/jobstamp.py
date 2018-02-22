@@ -143,7 +143,7 @@ _OutOfDateActionDetail = namedtuple("_OutOfDateActionDetail",
 
 
 def _out_of_date(func, *args, **kwargs):
-    """Internal function returning out of date file and detail to run job."""
+    """Return out of date file and detail to run job."""
     storage_directory = os.path.join(tempfile.gettempdir(), "jobstamps")
     stamp_input = "".join([func.__name__] +
                           [repr(v) for v in args] +
